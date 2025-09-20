@@ -9,6 +9,7 @@ import logging
 from datetime import datetime
 from langgraph.graph import StateGraph, END
 from operator import add
+from typing_extensions import TypedDict
 
 from agents import (
     IncidentTriggerAgent, LogAnalysisAgent, KnowledgeLookupAgent,
@@ -30,11 +31,41 @@ class ParallelIncidentWorkflow:
         self.logger = logger
     
     def create_workflow(self):
-        """Create the parallel multi-agent incident workflow with proper state handling"""
-        self.logger.info("🚀 Building Parallel Multi-Agent Incident Workflow...")
+        """Create the TRUE parallel multi-agent incident workflow"""
+        self.logger.info("🚀 Building TRUE Parallel Multi-Agent Incident Workflow...")
         
-        # Create workflow graph with dict state (simpler approach)
-        workflow = StateGraph(dict)
+        # Define state schema for TRUE parallel execution
+        class IncidentState(TypedDict):
+            # Core incident info
+            incident_id: str
+            raw_alert: str
+            timestamp: str
+            stage: str
+            service: str
+            severity: str
+            description: str
+            
+            # Agent results (concurrent updates allowed)
+            log_analysis_results: Dict[str, Any]
+            knowledge_lookup_results: Dict[str, Any]
+            root_cause_results: Dict[str, Any]
+            
+            # Coordination (use Annotated for concurrent list updates)
+            agents_completed: Annotated[List[str], add]
+            agent_errors: Annotated[List[Dict], add]
+            
+            # Decision making
+            decision: str
+            decision_metrics: Dict[str, Any]
+            escalation_reason: str
+            
+            # Control flow
+            next: str
+            retry_count: int
+            workflow_complete: bool
+        
+        # Create workflow graph with proper state schema
+        workflow = StateGraph(IncidentState)
         
         # Initialize agents
         incident_trigger = IncidentTriggerAgent()
@@ -61,11 +92,15 @@ class ParallelIncidentWorkflow:
         # Set entry point
         workflow.set_entry_point("incident_trigger")
         
-        # Define routing logic - SEQUENTIAL APPROACH TO AVOID CONCURRENT UPDATES
-        workflow.add_conditional_edges("incident_trigger", self.route_after_trigger)
-        workflow.add_conditional_edges("log_analysis", self.route_after_log_analysis)
-        workflow.add_conditional_edges("knowledge_lookup", self.route_after_knowledge)
-        workflow.add_conditional_edges("root_cause", self.route_after_root_cause)
+        # Define routing logic - TRUE PARALLEL EXECUTION
+        workflow.add_conditional_edges("incident_trigger", self.route_to_parallel_agents)
+        
+        # All parallel agents route to coordinator
+        workflow.add_edge("log_analysis", "agent_coordinator")
+        workflow.add_edge("knowledge_lookup", "agent_coordinator")
+        workflow.add_edge("root_cause", "agent_coordinator")
+        
+        # Coordinator waits for all agents then routes to decision maker
         workflow.add_conditional_edges("agent_coordinator", self.route_after_coordination)
         workflow.add_conditional_edges("decision_maker", self.route_after_decision)
         
@@ -75,57 +110,43 @@ class ParallelIncidentWorkflow:
         workflow.add_edge("communicator", END)
         workflow.add_edge("error_handler", END)
         
-        self.logger.info("✅ Parallel Multi-Agent Incident Workflow Created")
-        self.logger.info("🔄 Flow: Trigger → Log Analysis → Knowledge → Root Cause → Coordinator → Decision → Action → Communicator")
+        self.logger.info("✅ TRUE Parallel Multi-Agent Incident Workflow Created")
+        self.logger.info("🔄 Flow: Trigger → [Log Analysis + Knowledge + Root Cause] → Coordinator → Decision → Action → Communicator")
         
         self.workflow = workflow.compile()
         return self.workflow
     
     def _wrap_agent(self, agent):
-        """Wrap agent execution to handle state updates safely"""
+        """Wrap agent execution for TRUE parallel execution"""
         def wrapped_execute(state):
             try:
                 result = agent.execute(state)
-                # Ensure we return a complete state
-                return {**state, **result}
+                # Return only the agent's specific updates for concurrent merging
+                return result
             except Exception as e:
                 self.logger.error(f"❌ Agent {agent.agent_name} error: {e}")
                 return {
-                    **state,
-                    "error": str(e),
-                    "next": "error_handler"
+                    "agents_completed": [agent._get_agent_id()],
+                    "agent_errors": [{
+                        "agent": agent.agent_name,
+                        "error": str(e),
+                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    }]
                 }
         return wrapped_execute
     
-    def route_after_trigger(self, state: Dict[str, Any]):
-        """Route after incident trigger"""
-        if state.get("next") == "parallel_agents":
-            return "log_analysis"  # Start with first agent
-        elif state.get("error"):
+    def route_to_parallel_agents(self, state: Dict[str, Any]):
+        """Route to TRUE parallel agents after incident trigger"""
+        next_step = state.get("next", "end")
+        
+        if next_step == "parallel_agents":
+            # 🚀 LAUNCH ALL AGENTS IN TRUE PARALLEL
+            self.logger.info("🚀 Launching TRUE PARALLEL agents: Log Analysis + Knowledge Lookup + Root Cause")
+            return ["log_analysis", "knowledge_lookup", "root_cause"]
+        elif next_step == "error_handler":
             return "error_handler"
         else:
             return END
-    
-    def route_after_log_analysis(self, state: Dict[str, Any]):
-        """Route after log analysis"""
-        if state.get("error"):
-            return "error_handler"
-        else:
-            return "knowledge_lookup"  # Next agent
-    
-    def route_after_knowledge(self, state: Dict[str, Any]):
-        """Route after knowledge lookup"""
-        if state.get("error"):
-            return "error_handler"
-        else:
-            return "root_cause"  # Next agent
-    
-    def route_after_root_cause(self, state: Dict[str, Any]):
-        """Route after root cause analysis"""
-        if state.get("error"):
-            return "error_handler"
-        else:
-            return "agent_coordinator"  # Coordination
     
     def route_after_coordination(self, state: Dict[str, Any]):
         """Route after coordination"""
@@ -243,7 +264,7 @@ class ParallelIncidentWorkflow:
     
     def execute(self, raw_alert: str) -> Dict[str, Any]:
         """Execute the parallel workflow for an incident"""
-        self.logger.info("🚀 STARTING PARALLEL MULTI-AGENT INCIDENT RESPONSE")
+        self.logger.info("🚀 STARTING TRUE PARALLEL MULTI-AGENT INCIDENT RESPONSE")
         self.logger.info(f"📥 Alert: {raw_alert}")
         self.logger.info("=" * 60)
         
@@ -254,12 +275,12 @@ class ParallelIncidentWorkflow:
         state = create_incident_state(raw_alert)
         
         # Execute workflow
-        self.logger.info("⚡ Executing PARALLEL MULTI-AGENT workflow...")
+        self.logger.info("⚡ Executing TRUE PARALLEL MULTI-AGENT workflow...")
         final_state = self.workflow.invoke(state)
         
         # Display results
         self.logger.info("=" * 60)
-        self.logger.info("🏁 PARALLEL WORKFLOW COMPLETED")
+        self.logger.info("🏁 TRUE PARALLEL WORKFLOW COMPLETED")
         self.logger.info(f"📋 Incident: {final_state['incident_id']}")
         self.logger.info(f"📊 Status: {final_state['stage'].upper()}")
         
