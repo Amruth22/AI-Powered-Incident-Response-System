@@ -1,0 +1,55 @@
+INCIDENT: INC-001
+SERVICE: Payment API
+ANOMALY: Database timeout, connection pool exhausted
+ROOT_CAUSE: Traffic spike exceeded connection limits
+SOLUTION: Scale connection pool, restart service
+KEYWORDS: database, timeout, connection, pool
+
+INCIDENT: INC-002
+SERVICE: Auth Service
+ANOMALY: Memory leak, high CPU usage
+ROOT_CAUSE: Session cleanup not working
+SOLUTION: Restart service, fix session cleanup
+KEYWORDS: memory, leak, session, cpu
+
+INCIDENT: INC-003
+SERVICE: Payment API
+ANOMALY: High error rate, slow response
+ROOT_CAUSE: Database index missing
+SOLUTION: Add database index, optimize queries
+KEYWORDS: database, index, performance, query
+
+INCIDENT: INC-004
+SERVICE: Cache Service
+ANOMALY: Cache miss rate high, memory full
+ROOT_CAUSE: Cache eviction policy broken
+SOLUTION: Restart cache, fix eviction policy
+KEYWORDS: cache, memory, eviction, miss
+
+INCIDENT: INC-005
+SERVICE: Auth Service
+ANOMALY: Login failures, JWT errors
+ROOT_CAUSE: JWT key rotation failed
+SOLUTION: Rollback JWT key, fix rotation
+KEYWORDS: jwt, auth, login, key, rotation
+
+INCIDENT: INC-006
+SERVICE: Database
+ANOMALY: Slow queries, high CPU
+ROOT_CAUSE: Missing database indexes
+SOLUTION: Add indexes, optimize queries
+KEYWORDS: database, index, cpu, query, performance
+
+INCIDENT: INC-007
+SERVICE: Load Balancer
+ANOMALY: Uneven traffic, some servers overloaded
+ROOT_CAUSE: Load balancing algorithm issue
+SOLUTION: Fix load balancing, redistribute traffic
+KEYWORDS: load, balancer, traffic, algorithm
+
+INCIDENT: INC-008
+SERVICE: Payment API
+ANOMALY: Transaction failures, timeout errors
+ROOT_CAUSE: Payment gateway rate limiting
+SOLUTION: Implement retry logic, use backup gateway
+KEYWORDS: payment, gateway, timeout, retry, rate
