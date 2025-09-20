@@ -38,7 +38,8 @@ class LogAnalysisAgent(BaseIncidentAgent):
             # Increment retry count for decision making
             state["retry_count"] = retry_count + 1
         
+        # Return only agent-specific results for TRUE parallel execution
         return {
-            **state,
-            "log_analysis_results": results
+            "log_analysis_results": results,
+            "retry_count": state.get("retry_count", 0) + (1 if not results["anomalies_found"] else 0)
         }
