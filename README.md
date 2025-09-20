@@ -108,24 +108,42 @@ mkdir logs
 ```
 
 ### **Configuration**
-Update `core/config.py` with your credentials:
-```python
-# Email settings
-EMAIL_FROM = "your-email@gmail.com"
-EMAIL_PASSWORD = "your-app-password"
-EMAIL_TO = "recipient@gmail.com"
 
-# Gemini AI settings
-GEMINI_API_KEY = "your-gemini-api-key"
+#### **Environment Setup**
+```bash
+# 1. Copy the example environment file
+cp .env.example .env
 
-# System thresholds
-CONFIDENCE_THRESHOLD = 0.8  # Auto-mitigation threshold
-MAX_RETRIES = 3             # Log analysis retries
+# 2. Edit .env with your actual credentials
+nano .env  # or use your preferred editor
 ```
+
+#### **Required Environment Variables**
+```bash
+# Email Configuration
+EMAIL_FROM=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password-here
+EMAIL_TO=recipient@gmail.com
+
+# Gemini AI Configuration
+GEMINI_API_KEY=your-gemini-api-key-here
+
+# System Configuration (optional - has defaults)
+CONFIDENCE_THRESHOLD=0.8
+MAX_RETRIES=3
+LOG_LEVEL=INFO
+```
+
+#### **Getting API Keys**
+- **Gemini API Key**: Get from [Google AI Studio](https://makersuite.google.com/app/apikey)
+- **Gmail App Password**: Generate from [Google Account Settings](https://myaccount.google.com/apppasswords)
 
 ### **Usage**
 
 ```bash
+# Test configuration
+python test_system.py
+
 # Process incident alert
 python main.py "Payment API database timeout"
 
@@ -135,6 +153,8 @@ python main.py --demo
 # Interactive mode
 python main.py
 ```
+
+**Note**: The system will validate your configuration on startup and provide helpful error messages if anything is missing.
 
 ## 🤖 **Specialized Agents**
 
