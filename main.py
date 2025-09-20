@@ -56,7 +56,7 @@ Examples:
 
 def run_incident_response(alert_text: str):
     """Run the parallel multi-agent workflow"""
-    print("🚀 PARALLEL MULTI-AGENT INCIDENT RESPONSE")
+    print("🚀 TRUE PARALLEL MULTI-AGENT INCIDENT RESPONSE")
     print("=" * 50)
     start_time = datetime.now()
     
@@ -75,7 +75,7 @@ def run_incident_response(alert_text: str):
 
 def run_demo():
     """Run interactive demo with sample scenarios"""
-    print("🎬 INTERACTIVE DEMO - AI-Powered Incident Response")
+    print("🎬 INTERACTIVE DEMO - TRUE Parallel AI-Powered Incident Response")
     print("=" * 55)
     
     scenarios = [
@@ -140,7 +140,7 @@ def run_demo():
 
 def run_interactive_mode():
     """Interactive mode for single incident processing"""
-    print("🚨 AI-Powered Incident Response System")
+    print("🚨 TRUE Parallel AI-Powered Incident Response System")
     print("=" * 45)
     print("Options:")
     print("  1. Process Incident Alert")
