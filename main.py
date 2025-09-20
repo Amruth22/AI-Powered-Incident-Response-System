@@ -10,6 +10,7 @@ from datetime import datetime
 
 from workflows import process_incident
 from utils.logging_utils import setup_logging
+from core.config import validate_config, LOG_LEVEL, LOG_FILE
 
 def main():
     """Main application entry point"""
@@ -41,8 +42,20 @@ Examples:
     
     args = parser.parse_args()
     
+    # Validate configuration
+    try:
+        validate_config()
+        print("✅ Configuration validated successfully")
+    except ValueError as e:
+        print(f"❌ Configuration Error: {e}")
+        print("\n💡 Setup Instructions:")
+        print("1. Copy .env.example to .env")
+        print("2. Update .env with your actual credentials")
+        print("3. Run the application again")
+        sys.exit(1)
+    
     # Setup logging
-    setup_logging("INFO", "logs/incident_response.log")
+    setup_logging(LOG_LEVEL, LOG_FILE)
     
     # Handle different modes
     if args.demo:
