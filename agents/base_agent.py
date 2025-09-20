@@ -19,19 +19,16 @@ class BaseIncidentAgent(ABC):
             # Execute agent-specific processing
             result = self.process(state)
             
-            # Always add agent to completed list (for concurrent updates)
+            # Add agent to completed list for TRUE parallel execution
             agent_id = self._get_agent_id()
-            if "agents_completed" not in result:
-                result["agents_completed"] = [agent_id]
-            elif agent_id not in result["agents_completed"]:
-                result["agents_completed"] = result["agents_completed"] + [agent_id]
+            result["agents_completed"] = [agent_id]  # LangGraph will merge with existing list
                 
             self.logger.info(f"✅ {self.agent_name.capitalize()} analysis complete")
             return result
             
         except Exception as e:
             self.logger.error(f"❌ {self.agent_name.capitalize()} agent error: {e}")
-            # Return error state with proper concurrent updates
+            # Return error state for TRUE parallel execution
             agent_id = self._get_agent_id()
             error_info = {
                 "agent": self.agent_name,
@@ -40,10 +37,9 @@ class BaseIncidentAgent(ABC):
             }
             
             return {
-                **state,
                 f"{self._get_result_key()}": {},
-                "agents_completed": [agent_id],  # Will be added to existing list
-                "agent_errors": [error_info]     # Will be added to existing list
+                "agents_completed": [agent_id],  # LangGraph merges with Annotated[List, add]
+                "agent_errors": [error_info]     # LangGraph merges with Annotated[List, add]
             }
     
     @abstractmethod
