@@ -52,7 +52,7 @@ class RootCauseAgent(BaseIncidentAgent):
         else:
             self.logger.warning(f"⚠️ LOW CONFIDENCE ({confidence_pct}%) - {root_cause}")
         
+        # Return only agent-specific results for TRUE parallel execution
         return {
-            **state,
             "root_cause_results": results
         }
