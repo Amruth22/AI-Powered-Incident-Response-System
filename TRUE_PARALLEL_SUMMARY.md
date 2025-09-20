@@ -185,12 +185,26 @@ def route_after_coordination(self, state):
 
 ## 🚀 **Usage Examples**
 
+### **Quick Setup**
+```bash
+# 1. Run setup script
+python setup.py
+
+# 2. Configure credentials
+cp .env.example .env
+nano .env  # Edit with your credentials
+
+# 3. Test system
+python test_system.py
+```
+
 ### **Run TRUE Parallel System**
 ```bash
 # Experience TRUE parallel execution
 python main.py "Payment API database timeout"
 
 # You'll see:
+# ✅ Configuration validated successfully
 # 🚀 Launching TRUE PARALLEL agents: Log Analysis + Knowledge Lookup + Root Cause
 # (All 3 agents execute simultaneously)
 ```
@@ -216,8 +230,17 @@ python test_true_parallel.py
 - ✅ **Agent coordination and synchronization**
 - ✅ **Professional architecture maintained**
 - ✅ **Production-ready reliability**
+- ✅ **Environment-based configuration**
+- ✅ **Secure credential management**
+- ✅ **Easy setup and validation**
 
-**Mission accomplished - TRUE parallel multi-agent system successfully implemented!** 🎉
+### **Security & Configuration Improvements**
+- **Environment Variables**: Secure credential storage with `.env` files
+- **Configuration Validation**: Automatic validation with helpful error messages
+- **Setup Automation**: `setup.py` script for easy installation
+- **Credential Safety**: `.gitignore` prevents accidental credential commits
+
+**Mission accomplished - TRUE parallel multi-agent system with secure configuration successfully implemented!** 🎉
 
 ---
 
