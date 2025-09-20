@@ -40,7 +40,7 @@ class KnowledgeLookupAgent(BaseIncidentAgent):
         
         self.logger.info(f"✅ Found {len(similar)} similar historical incidents")
         
+        # Return only agent-specific results for TRUE parallel execution
         return {
-            **state,
             "knowledge_lookup_results": results
         }
