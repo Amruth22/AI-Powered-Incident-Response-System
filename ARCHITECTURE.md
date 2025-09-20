@@ -175,6 +175,106 @@ Each external integration is wrapped in a service layer:
 
 ## 🚀 **Workflow Orchestration**
 
+### **TRUE Parallel Multi-Agent Workflow Diagram**
+
+```mermaid
+graph TD
+    %% Entry Point
+    START([🚀 Workflow Start]) --> TRIGGER[🚨 Incident Trigger Agent]
+    
+    %% Incident Trigger and Setup
+    TRIGGER --> |"Parse Alert<br/>Extract Service Info<br/>Send Alert Email"| PARALLEL{"🎯 Launch Parallel Agents"}
+    
+    %% TRUE Parallel Agent Execution
+    PARALLEL --> |"Simultaneously"| LOG[🔍 Log Analysis Agent]
+    PARALLEL --> |"Simultaneously"| KNOWLEDGE[📚 Knowledge Lookup Agent]
+    PARALLEL --> |"Simultaneously"| ROOT[🎯 Root Cause Agent]
+    
+    %% Agent Specializations
+    LOG --> |"Anomaly Detection<br/>Log Pattern Analysis<br/>Retry Logic (3x)"| LOG_RESULT[🔍 Log Analysis Results<br/>Anomalies: 2 Found<br/>Error Patterns: High]
+    
+    KNOWLEDGE --> |"Historical Search<br/>Similarity Matching<br/>Past Resolutions"| KNOWLEDGE_RESULT[📚 Knowledge Results<br/>Similar Incidents: 3<br/>Resolution Patterns: Found]
+    
+    ROOT --> |"Gemini 2.0 Flash<br/>AI Root Cause Analysis<br/>Confidence Scoring"| ROOT_RESULT[🎯 Root Cause Results<br/>Confidence: 80%<br/>Solution: Database Scale]
+    
+    %% Agent Coordination
+    LOG_RESULT --> COORD[🎯 Agent Coordinator]
+    KNOWLEDGE_RESULT --> COORD
+    ROOT_RESULT --> COORD
+    
+    %% Coordination Logic
+    COORD --> |"All Agents Complete?"| CHECK{"✅ All 3 Agents<br/>Completed?"}
+    CHECK --> |"No - Wait"| WAIT[⏳ Wait for<br/>Remaining Agents]
+    WAIT --> CHECK
+    CHECK --> |"Yes - Proceed"| SUMMARY[📋 Generate<br/>Multi-Agent Summary]
+    
+    %% Decision Making
+    SUMMARY --> DECISION{"⚖️ Decision Maker<br/>Evaluate Confidence"}
+    
+    %% Multi-Dimensional Decision Branching
+    DECISION --> |"Retry Count ≥ 3<br/>Max Attempts Reached"| ESCALATE_RETRY[🔴 Escalation<br/>No Anomalies Found]
+    DECISION --> |"No Anomalies Found<br/>Log Analysis Failed"| ESCALATE_LOGS[🔴 Escalation<br/>Analysis Incomplete]
+    DECISION --> |"Confidence < 80%<br/>Low AI Confidence"| ESCALATE_CONF[🔴 Escalation<br/>Uncertain Root Cause]
+    DECISION --> |"No Similar Incidents<br/>No Historical Guidance"| ESCALATE_HIST[🔴 Escalation<br/>Unknown Pattern]
+    DECISION --> |"Confidence ≥ 80%<br/>All Conditions Met"| MITIGATE[⚡ Auto-Mitigation<br/>Execute Solution]
+    
+    %% Mitigation Path
+    MITIGATE --> |"Execute Solution<br/>Simulate Mitigation"| MIT_CHECK{"🔧 Mitigation<br/>Successful?"}
+    MIT_CHECK --> |"Success"| RESOLVED[✅ Incident Resolved<br/>Auto-Recovery Complete]
+    MIT_CHECK --> |"Failed"| ESCALATE_MIT[🔴 Escalation<br/>Mitigation Failed]
+    
+    %% Escalation Paths
+    ESCALATE_RETRY --> ESCALATION[🚨 Human Escalation Agent]
+    ESCALATE_LOGS --> ESCALATION
+    ESCALATE_CONF --> ESCALATION
+    ESCALATE_HIST --> ESCALATION
+    ESCALATE_MIT --> ESCALATION
+    
+    %% Final Communication
+    RESOLVED --> COMM_SUCCESS[📧 Communicator Agent<br/>Success Report]
+    ESCALATION --> COMM_ESCALATE[📧 Communicator Agent<br/>Escalation Report]
+    
+    %% Email Notifications Throughout
+    TRIGGER --> EMAIL1[📧 Initial Alert Email]
+    LOG_RESULT --> EMAIL2[📧 Log Analysis Email]
+    ROOT_RESULT --> EMAIL3[📧 Root Cause Email]
+    MITIGATE --> EMAIL4[📧 Mitigation Email]
+    ESCALATION --> EMAIL5[📧 Escalation Email]
+    
+    %% Final States
+    COMM_SUCCESS --> END_SUCCESS([🟢 RESOLVED<br/>Incident Auto-Resolved])
+    COMM_ESCALATE --> END_ESCALATE([🔴 ESCALATED<br/>Human Intervention Required])
+    
+    %% Error Handling
+    TRIGGER --> |"Error"| ERROR[❌ Error Handler]
+    LOG --> |"Error"| ERROR
+    KNOWLEDGE --> |"Error"| ERROR
+    ROOT --> |"Error"| ERROR
+    COORD --> |"Error"| ERROR
+    MITIGATE --> |"Error"| ERROR
+    ESCALATION --> |"Error"| ERROR
+    ERROR --> END_ERROR([🔴 ERROR<br/>System Failure])
+    
+    %% Styling with Black Text
+    classDef agentNode fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000000
+    classDef resultNode fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000000
+    classDef decisionNode fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000000
+    classDef criticalNode fill:#ffebee,stroke:#c62828,stroke-width:3px,color:#000000
+    classDef successNode fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px,color:#000000
+    classDef errorNode fill:#fce4ec,stroke:#ad1457,stroke-width:2px,color:#000000
+    classDef emailNode fill:#fff9c4,stroke:#f57f17,stroke-width:1px,color:#000000
+    classDef defaultNode fill:#f9f9f9,stroke:#333333,stroke-width:2px,color:#000000
+    
+    class LOG,KNOWLEDGE,ROOT,MITIGATE,ESCALATION agentNode
+    class LOG_RESULT,KNOWLEDGE_RESULT,ROOT_RESULT resultNode
+    class DECISION,CHECK,MIT_CHECK decisionNode
+    class ESCALATE_RETRY,ESCALATE_LOGS,ESCALATE_CONF,ESCALATE_HIST,ESCALATE_MIT,END_ESCALATE criticalNode
+    class RESOLVED,COMM_SUCCESS,END_SUCCESS successNode
+    class ERROR,END_ERROR errorNode
+    class EMAIL1,EMAIL2,EMAIL3,EMAIL4,EMAIL5 emailNode
+    class START,TRIGGER,PARALLEL,COORD,SUMMARY,WAIT,COMM_ESCALATE defaultNode
+```
+
 ### **LangGraph Integration**
 - **StateGraph**: Manages workflow state with concurrent updates
 - **Annotated State Types**: `Annotated[List[str], add]` for concurrent list merging
